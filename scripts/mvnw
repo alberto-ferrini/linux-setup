@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Check if current working directory is the scripts directory
+if [[ "$PWD" == "$HOME/scripts" ]]; then
+  echo "⚠️ mvnw command is forbidden in scripts directory"
+  exit 1
+fi
+
+# Check if mvnw file exists
+if [[ $(find -maxdepth 1 -type f -name "mvnw" | wc -l) != 1 ]]; then
+  echo "⚠️ mvnw file not found"
+  exit 1
+fi
+
+./mvnw $@

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Set working directory to this script directory
+cd "$(dirname "$0")"
+
+echo "⏳ Installing setup..."
+for fileName in "$HOME/.bashrc" "$HOME/.profile"; do
+    if [[ $(grep 'linux-setup customization' $fileName | wc -l) == "0" ]]; then
+        echo '' >>$fileName
+        echo '# BEGIN linux-setup customization' >>$fileName
+        echo 'source $HOME/.setup' >>$fileName
+        echo '# END linux-setup customization' >>$fileName
+        echo '' >>$fileName
+        echo "  ✔️ $fileName updated"
+    else
+        echo "  ℹ️ $fileName already configured"
+    fi
+done
+echo "✔️ Setup installed"
+echo ""
+echo "⏳ Updating files..."
+for element in ".setup" "scripts"; do
+    \cp -rf $element $HOME
+    echo "  🔄 $element updated"
+done
+echo "✔️ Files updated"
+echo ""
+echo "You can configure Git for credentials storage (https://stackoverflow.com/a/35942890)."
+read -p "Configure Git for credentials storage? (y/n): " confirm
+if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    git config --global credential.helper store
+    echo "✔️ Git credentials storage configured"
+fi
