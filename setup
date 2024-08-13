@@ -3,6 +3,80 @@
 # Set working directory to this script directory
 cd "$(dirname "$0")"
 
+read -p "Do you want to install Git? (y/n): " confirm
+if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    echo "⏳ Installing Git..."
+    sudo apt-get install git
+    echo "✔️ Git installed"
+fi
+echo ""
+
+echo "Do you want to configure Git for credentials storage (https://stackoverflow.com/a/35942890)."
+read -p "Configure Git for credentials storage? (y/n): " confirm
+if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    git config --global credential.helper store
+    echo "✔️ Git credentials storage configured"
+fi
+echo ""
+
+read -p "Do you want to install Java? (y/n): " confirm
+if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    echo "⏳ Installing jq..."
+    sudo apt-get install jq
+    echo "✔️ jq installed"
+    echo "⏳ Retrieving available Java versions..."
+    javaVersions=$(curl -s https://api.adoptium.net/v3/info/available_releases | jq -c '.available_releases?|@sh' | sed 's/"//g')
+    echo "✔️ Available Java versions retrieved"
+    # read -a JAVA_VERSIONS <<<$JAVA_VERSIONS
+    # echo "${JAVA_VERSIONS[0]}"
+    echo ""
+    echo "Available Java versions: $javaVersions"
+    read -p "Select Java version: " javaVersionDownload
+    tmpDir="/tmp/$(date +%s)"
+    mkdir -p $tmpDir
+    curl --output-dir $tmpDir --location --remote-header-name --remote-name "https://api.adoptium.net/v3/binary/latest/$javaVersionDownload/ga/linux/x64/jdk/hotspot/normal/eclipse"
+    jdkName=$(ls $tmpDir)
+    mkdir -p $HOME/software/jdk
+    mv $tmpDir/*.tar.gz $HOME/software/jdk
+    rm -rf $tmpDir
+    tar -zxvf $HOME/software/jdk/$jdkName --directory $HOME/software/jdk
+    rm -f $HOME/software/jdk/$jdkName
+    # jdkVersion=${jdkName#*_}
+    # jdkVersion=${jdkVersion#*_}
+    # jdkVersion=${jdkVersion#*_}
+    # jdkVersion=${jdkVersion#*_}
+    # jdkVersion=${jdkVersion%.*}
+    # jdkVersion=${jdkVersion%.*}
+    # jdkVersion=${jdkVersion/_/+}
+fi
+echo ""
+
+mkdir -p $HOME/software/jdk
+jdks=($(ls $HOME/software/jdk))
+jdksLength=${#jdks[@]}
+if [[ $jdksLength < 1 ]]; then
+    echo "❌ No JDKs found"
+    exit 1
+fi
+echo "JDKs found:"
+for ((i = 0; i < ${jdksLength}; i++)); do
+    echo "$((i + 1))) ${jdks[$i]}"
+done
+read -p "Choose JDK to set to default (number): " choose
+selectedJdk=${jdks[$((choose - 1))]}
+echo "Selected JDK: $selectedJdk"
+
+echo "⏳ Configuring setup..."
+\cp -rf .setup $HOME
+javaMajorVersion=${selectedJdk#*_}
+javaMajorVersion=${javaMajorVersion#*-}
+javaMajorVersion=${javaMajorVersion%.*}
+javaMajorVersion=${javaMajorVersion%.*}
+sed -i -e "s/@JAVA_MAJOR_VERSION@/$javaMajorVersion/g" "$HOME/.setup"
+sed -i -e "s/@JAVA_VERSION@/$selectedJdk/g" "$HOME/.setup"
+echo "✔️ Setup configured"
+echo ""
+
 echo "⏳ Installing setup..."
 for fileName in "$HOME/.bashrc" "$HOME/.profile"; do
     if [[ $(grep 'linux-setup customization' $fileName | wc -l) == "0" ]]; then
@@ -19,15 +93,14 @@ done
 echo "✔️ Setup installed"
 echo ""
 echo "⏳ Updating files..."
-for element in ".setup" "scripts"; do
+for element in "scripts"; do
     \cp -rf $element $HOME
     echo "  🔄 $element updated"
 done
 echo "✔️ Files updated"
 echo ""
-echo "You can configure Git for credentials storage (https://stackoverflow.com/a/35942890)."
-read -p "Configure Git for credentials storage? (y/n): " confirm
-if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
-    git config --global credential.helper store
-    echo "✔️ Git credentials storage configured"
-fi
+
+echo "✔️ Environment ready"
+unset JAVA_HOME
+bash
+

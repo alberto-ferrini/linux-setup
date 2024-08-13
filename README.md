@@ -1,13 +1,15 @@
 # Linux Setup
 
-Common utilities for new Linux environment.
+Setup script for Linux environment.
+
+The script installs Git, Java (JDK) and configures the PATH environment variable.
 
 ## Installation
 
 For the installation, launch the file [setup](./setup).
 
 ```bash
-bash ./setup
+bash setup
 ```
 
 ## Contents

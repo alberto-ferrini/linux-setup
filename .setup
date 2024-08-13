@@ -5,8 +5,9 @@ export SOFTWARE_HOME="$HOME/software"
 
 # Set the Java home
 if [[ ! -v JAVA_HOME ]]; then
-  export JAVA_HOME="$SOFTWARE_HOME/jdk/jdk-21.0.4+7"
-  export JAVA_VERSION="21"
+  export JAVA_MAJOR_VERSION="@JAVA_MAJOR_VERSION@"
+  export JAVA_VERSION="@JAVA_VERSION@"
+  export JAVA_HOME="$SOFTWARE_HOME/jdk/$JAVA_VERSION"
 fi
 
 # Set the scripts path
@@ -14,4 +15,3 @@ export PATH="$HOME/scripts:$PATH"
 
 # Set the Java path
 export PATH="$JAVA_HOME/bin:$PATH"
-
