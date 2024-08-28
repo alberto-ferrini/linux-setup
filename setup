@@ -3,11 +3,27 @@
 # Set working directory to this script directory
 cd "$(dirname "$0")"
 
+read -p "Do you want to download package information from all configured sources? (y/n): " confirm
+if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    echo "⏳ Updating..."
+    sudo apt-get update
+    echo "✅ Updated"
+fi
+echo ""
+
+read -p "Do you want to install available upgrades of all packages currently installed on the system? (y/n): " confirm
+if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    echo "⏳ Upgrading..."
+    sudo apt-get upgrade
+    echo "✅ Updated"
+fi
+echo ""
+
 read -p "Do you want to install Git? (y/n): " confirm
 if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
     echo "⏳ Installing Git..."
     sudo apt-get install git
-    echo "✔️ Git installed"
+    echo "✅ Git installed"
 fi
 echo ""
 
@@ -15,18 +31,41 @@ echo "Do you want to configure Git for credentials storage (https://stackoverflo
 read -p "Configure Git for credentials storage? (y/n): " confirm
 if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
     git config --global credential.helper store
-    echo "✔️ Git credentials storage configured"
+    echo "✅ Git credentials storage configured"
+fi
+echo ""
+
+# Docker installation script from https://docs.docker.com/engine/install/ubuntu/ and https://docs.docker.com/engine/install/linux-postinstall/
+read -p "Do you want to install Docker? (y/n): " confirm
+if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    echo "⏳ Installing Docker..."
+    for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+    sudo apt-get update
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    sudo systemctl enable docker.service
+    sudo systemctl enable containerd.service
+    echo "✅ Docker installed"
 fi
 echo ""
 
 read -p "Do you want to install Java? (y/n): " confirm
 if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    # Installing tool for JSON parsing (used to parse JSON API HTTP response).
     echo "⏳ Installing jq..."
     sudo apt-get install jq
-    echo "✔️ jq installed"
+    echo "✅ jq installed"
     echo "⏳ Retrieving available Java versions..."
+    # Using Adoptium API from https://api.adoptium.net/q/swagger-ui/
     javaVersions=$(curl -s https://api.adoptium.net/v3/info/available_releases | jq -c '.available_releases?|@sh' | sed 's/"//g')
-    echo "✔️ Available Java versions retrieved"
+    echo "✅ Available Java versions retrieved"
     # read -a JAVA_VERSIONS <<<$JAVA_VERSIONS
     # echo "${JAVA_VERSIONS[0]}"
     echo ""
@@ -74,7 +113,7 @@ javaMajorVersion=${javaMajorVersion%.*}
 javaMajorVersion=${javaMajorVersion%.*}
 sed -i -e "s/@JAVA_MAJOR_VERSION@/$javaMajorVersion/g" "$HOME/.setup"
 sed -i -e "s/@JAVA_VERSION@/$selectedJdk/g" "$HOME/.setup"
-echo "✔️ Setup configured"
+echo "✅ Setup configured"
 echo ""
 
 echo "⏳ Installing setup..."
@@ -85,22 +124,21 @@ for fileName in "$HOME/.bashrc" "$HOME/.profile"; do
         echo 'source $HOME/.setup' >>$fileName
         echo '# END linux-setup customization' >>$fileName
         echo '' >>$fileName
-        echo "  ✔️ $fileName updated"
+        echo "  ✅ $fileName updated"
     else
-        echo "  ℹ️ $fileName already configured"
+        echo "  🆗 $fileName already configured"
     fi
 done
-echo "✔️ Setup installed"
+echo "✅ Setup installed"
 echo ""
 echo "⏳ Updating files..."
 for element in "scripts"; do
     \cp -rf $element $HOME
     echo "  🔄 $element updated"
 done
-echo "✔️ Files updated"
+echo "✅ Files updated"
 echo ""
 
-echo "✔️ Environment ready"
+echo "✅ Environment ready"
 unset JAVA_HOME
 bash
-
