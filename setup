@@ -24,14 +24,13 @@ if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
     echo "⏳ Installing Git..."
     sudo apt-get install git
     echo "✅ Git installed"
-fi
-echo ""
-
-echo "Do you want to configure Git for credentials storage (https://stackoverflow.com/a/35942890)."
-read -p "Configure Git for credentials storage? (y/n): " confirm
-if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
-    git config --global credential.helper store
-    echo "✅ Git credentials storage configured"
+    echo ""
+    echo "Do you want to configure Git for credentials storage (https://stackoverflow.com/a/35942890)."
+    read -p "Configure Git for credentials storage? (y/n): " confirm
+    if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+        git config --global credential.helper store
+        echo "✅ Git credentials storage configured"
+    fi
 fi
 echo ""
 
@@ -62,6 +61,10 @@ if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
     echo "⏳ Installing jq..."
     sudo apt-get install jq
     echo "✅ jq installed"
+    # Installing tool for auto-generated file formatting.
+    echo "⏳ Installing clang-format..."
+    sudo apt-get install clang-format
+    echo "✅ clang-format installed"
     echo "⏳ Retrieving available Java versions..."
     # Using Adoptium API from https://api.adoptium.net/q/swagger-ui/
     javaVersions=$(curl -s https://api.adoptium.net/v3/info/available_releases | jq -c '.available_releases?|@sh' | sed 's/"//g')
