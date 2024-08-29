@@ -1,0 +1,27 @@
+#!/bin/bash
+
+mkdir -p $HOME/software/jdk
+jdks=($(ls $HOME/software/jdk))
+jdksLength=${#jdks[@]}
+if [[ $jdksLength < 1 ]]; then
+  echo "❌ No JDKs found"
+  exit 1
+fi
+echo "JDKs found:"
+for ((i = 0; i < ${jdksLength}; i++)); do
+  echo "$((i + 1))) ${jdks[$i]}"
+done
+read -p "Choose JDK to set to default (number): " choose
+selectedJdk=${jdks[$((choose - 1))]}
+echo "Selected JDK: $selectedJdk"
+
+javaMajorVersion=${selectedJdk#*_}
+javaMajorVersion=${javaMajorVersion#*-}
+javaMajorVersion=${javaMajorVersion%.*}
+javaMajorVersion=${javaMajorVersion%.*}
+
+export JAVA_MAJOR_VERSION="$javaMajorVersion"
+export JAVA_VERSION="$selectedJdk"
+export JAVA_HOME="$SOFTWARE_HOME/jdk/$JAVA_VERSION"
+
+bash

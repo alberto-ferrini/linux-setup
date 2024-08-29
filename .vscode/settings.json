@@ -1,6 +1,5 @@
 {
   "cSpell.enabled": true,
-  "cSpell.enableFiletypes": [
-    "shellscript"
-  ]
+  "cSpell.enableFiletypes": ["shellscript"],
+  "cSpell.ignoreWords": ["jdks"]
 }
