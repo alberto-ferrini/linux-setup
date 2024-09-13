@@ -116,6 +116,11 @@ javaMajorVersion=${javaMajorVersion%.*}
 javaMajorVersion=${javaMajorVersion%.*}
 sed -i -e "s/@JAVA_MAJOR_VERSION@/$javaMajorVersion/g" "$HOME/.setup"
 sed -i -e "s/@JAVA_VERSION@/$selectedJdk/g" "$HOME/.setup"
+
+if [ ! -f $HOME/.setup-custom ]; then
+    \cp -rf .setup-custom $HOME
+fi
+
 echo "✅ Setup configured"
 echo ""
 
