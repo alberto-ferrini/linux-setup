@@ -104,7 +104,14 @@ echo "JDKs found:"
 for ((i = 0; i < ${jdksLength}; i++)); do
     echo "$((i + 1))) ${jdks[$i]}"
 done
-read -p "Choose JDK to set to default (number): " choose
+
+re='^[0-9]+$'
+choose=-1
+
+while [[ ! $choose =~ $re || $choose -le 0 || $choose -gt $jdksLength ]]; do
+    read -p "Choose JDK to set to default (number): " choose
+done
+
 selectedJdk=${jdks[$((choose - 1))]}
 echo "Selected JDK: $selectedJdk"
 
