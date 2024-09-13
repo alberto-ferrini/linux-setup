@@ -55,6 +55,18 @@ if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
 fi
 echo ""
 
+# Node.js installation script from https://nodejs.org/en/download/package-manager
+read -p "Do you want to install Node.js? (y/n): " confirm
+if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    echo "⏳ Installing Node.js ..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+    source $HOME/.bashrc
+    nvm install --lts
+    nvm use --lts
+    echo "✅ Node.js installed"
+fi
+echo ""
+
 read -p "Do you want to install Java? (y/n): " confirm
 if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
     # Installing tool for JSON parsing (used to parse JSON API HTTP response).
