@@ -135,21 +135,16 @@ javaMajorVersion=${javaMajorVersion%.*}
 javaMajorVersion=${javaMajorVersion%.*}
 sed -i -e "s/@JAVA_MAJOR_VERSION@/$javaMajorVersion/g" "$HOME/.setup"
 sed -i -e "s/@JAVA_VERSION@/$selectedJdk/g" "$HOME/.setup"
-
-if [ ! -f $HOME/.setup-custom ]; then
-    \cp -rf .setup-custom $HOME
-fi
-
 echo "✅ Setup configured"
 echo ""
 
 echo "⏳ Installing setup..."
 for fileName in "$HOME/.bashrc" "$HOME/.profile"; do
-    if [[ $(grep 'linux-setup customization' $fileName | wc -l) == "0" ]]; then
+    if [[ $(grep 'BEGIN linux-setup' $fileName | wc -l) == "0" ]]; then
         echo '' >>$fileName
-        echo '# BEGIN linux-setup customization' >>$fileName
+        echo '# BEGIN linux-setup' >>$fileName
         echo 'source $HOME/.setup' >>$fileName
-        echo '# END linux-setup customization' >>$fileName
+        echo '# END linux-setup' >>$fileName
         echo '' >>$fileName
         echo "  ✅ $fileName updated"
     else

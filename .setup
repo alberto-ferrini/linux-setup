@@ -18,4 +18,3 @@ export PATH="$HOME/scripts:$PATH"
 # Set the Java path
 export PATH="$JAVA_HOME/bin:$PATH"
 
-source $HOME/.setup-custom
