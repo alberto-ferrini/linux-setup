@@ -10,11 +10,8 @@ if [[ ! -v JAVA_HOME ]]; then
   export JAVA_HOME="$SOFTWARE_HOME/jdk/$JAVA_VERSION"
 fi
 
-export JAVA_POST_PROCESS_FILE="clang-format -i"
-
 # Set the scripts path
 export PATH="$HOME/scripts:$PATH"
 
 # Set the Java path
 export PATH="$JAVA_HOME/bin:$PATH"
-

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+nvmVersion="0.40.3"
+
 # Set working directory to this script directory
 cd "$(dirname "$0")"
 
@@ -59,7 +61,7 @@ echo ""
 read -p "Do you want to install Node.js? (y/n): " confirm
 if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
     echo "⏳ Installing Node.js ..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v$nvmVersion/install.sh | bash
     source $HOME/.bashrc
     nvm install --lts
     nvm use --lts
@@ -81,8 +83,6 @@ if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
     # Using Adoptium API from https://api.adoptium.net/q/swagger-ui/
     javaVersions=$(curl -s https://api.adoptium.net/v3/info/available_releases | jq -c '.available_releases?|@sh' | sed 's/"//g')
     echo "✅ Available Java versions retrieved"
-    # read -a JAVA_VERSIONS <<<$JAVA_VERSIONS
-    # echo "${JAVA_VERSIONS[0]}"
     echo ""
     echo "Available Java versions: $javaVersions"
     read -p "Select Java version: " javaVersionDownload
@@ -95,13 +95,6 @@ if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
     rm -rf $tmpDir
     tar -zxvf $HOME/software/jdk/$jdkName --directory $HOME/software/jdk
     rm -f $HOME/software/jdk/$jdkName
-    # jdkVersion=${jdkName#*_}
-    # jdkVersion=${jdkVersion#*_}
-    # jdkVersion=${jdkVersion#*_}
-    # jdkVersion=${jdkVersion#*_}
-    # jdkVersion=${jdkVersion%.*}
-    # jdkVersion=${jdkVersion%.*}
-    # jdkVersion=${jdkVersion/_/+}
 fi
 echo ""
 
