@@ -3,17 +3,54 @@
 set -eu
 
 version=1.0.0
+base_url=https://raw.githubusercontent.com/alberto-ferrini/linux-setup/refs/heads/main
+
 echo 🔵 Linux Setup $version
 
 echo ⏳ Checking for update...
 # Download the content of the file into a variable
-online_content=$(curl -s https://raw.githubusercontent.com/alberto-ferrini/linux-setup/refs/heads/main/linux-setup)
+online_content=$(curl -s $base_url/linux-setup)
 
 # Use grep to find the line starting with 'linuxSetupVersion=' and sed to extract the value after '='
 online_version=$(echo "$online_content" | grep '^version=' | sed 's/^version=//')
 
-if [ "$version" = "$online_version" ]; then
+if [ $version = $online_version ]; then
     echo "🟢 Linux Setup is up to date"
 else
     echo "🟡 Update is available (v. $online_version)"
+    read -p "👉 Do you want to upgrade now (y/n)? " answer
+    if [ $answer = "y" ]; then
+        echo "⏳ Updating..."
+        curl -sL $base_url/linux-setup -o $HOME/linux-setup
+        chmod 755 $HOME/linux-setup
+        $HOME/linux-setup
+    fi
+fi
+
+echo
+echo "📘 Git"
+
+if ! command -v git &> /dev/null; then
+    echo "🟡 Git is not installed"
+    read -p "👉 Do you want to install (y/n)? " answer
+    if [ $answer = "y" ]; then
+        echo "⏳ Installing..."
+        sudo apt-get install -y git &> /dev/null
+    fi
+fi
+if command -v git &> /dev/null; then
+    git_version=$(git --version | sed 's/.* //')
+    echo "🟢 Git installed (v. $git_version)"
+    git_store=$(git config --global --get credential.helper || true)
+    if [ -z "$git_store" ]; then
+        echo "🟡 Git credential storage not enabled"
+        read -p "👉 Do you want to enable (y/n)? " answer
+        if [ $answer = "y" ]; then
+            echo "⏳ Enabling..."
+            git config --global credential.helper store
+            echo "🟢 Git credential storage enabled"
+        fi
+    else
+        echo "🟢 Git credential storage enabled"
+    fi
 fi
