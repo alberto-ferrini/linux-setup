@@ -2,14 +2,18 @@
 
 set -eu
 
-linux_setup_version=1.0.0
-echo 🔵 Linux Setup $linux_setup_version
+version=1.0.0
+echo 🔵 Linux Setup $version
 
+echo ⏳ Checking for update...
 # Download the content of the file into a variable
-linux_setup_online_content=$(curl -s https://raw.githubusercontent.com/alberto-ferrini/linux-setup/refs/heads/main/linux-setup)
+online_content=$(curl -s https://raw.githubusercontent.com/alberto-ferrini/linux-setup/refs/heads/main/linux-setup)
 
 # Use grep to find the line starting with 'linuxSetupVersion=' and sed to extract the value after '='
-linux_setup_online_version=$(echo "$linux_setup_online_content" | grep '^linuxSetupVersion=' | sed 's/^linuxSetupVersion=//')
+online_version=$(echo "$online_content" | grep '^version=' | sed 's/^version=//')
 
-# Print the extracted version
-echo "The Linux Setup online version is: $linux_setup_online_version"
+if [ "$version" = "$online_version" ]; then
+    echo "🟢 Linux Setup is up to date"
+else
+    echo "🟡 Update is available (v. $online_version)"
+fi
