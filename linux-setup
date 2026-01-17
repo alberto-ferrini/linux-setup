@@ -2,6 +2,14 @@
 
 set -eu
 
-linuxSetupVersion=1.0.0
-echo 🔵 Linux Setup $linuxSetupVersion
+linux_setup_version=1.0.0
+echo 🔵 Linux Setup $linux_setup_version
 
+# Download the content of the file into a variable
+linux_setup_online_content=$(curl -s https://raw.githubusercontent.com/alberto-ferrini/linux-setup/refs/heads/main/linux-setup)
+
+# Use grep to find the line starting with 'linuxSetupVersion=' and sed to extract the value after '='
+linux_setup_online_version=$(echo "$linux_setup_online_content" | grep '^linuxSetupVersion=' | sed 's/^linuxSetupVersion=//')
+
+# Print the extracted version
+echo "The Linux Setup online version is: $linux_setup_online_version"
