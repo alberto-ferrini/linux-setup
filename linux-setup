@@ -4,3 +4,4 @@ set -eu
 
 linuxSetupVersion=1.0.0
 echo 🔵 Linux Setup $linuxSetupVersion
+
