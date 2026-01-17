@@ -6,3 +6,4 @@ COPY --chmod=755 --chown=ubuntu:ubuntu linux-setup /home/ubuntu
 USER ubuntu
 RUN echo $HOME/linux-setup >> /home/ubuntu/.bashrc
 WORKDIR /home/ubuntu
+ENV USER=ubuntu
