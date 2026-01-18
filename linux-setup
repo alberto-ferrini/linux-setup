@@ -6,6 +6,7 @@ version=1.0.0
 base_url=https://raw.githubusercontent.com/alberto-ferrini/linux-setup/refs/heads/main
 linux_setup_home=$HOME/.linux-setup
 log_file=$linux_setup_home/linux-setup.log
+need_reboot="false"
 
 echo 🔵 Linux Setup $version
 echo
@@ -83,6 +84,7 @@ if ! command -v docker &> /dev/null; then
         sudo systemctl enable docker.service &>> $log_file
         sudo systemctl enable containerd.service &>> $log_file
         # newgrp docker
+        need_reboot="true"
     fi
 fi
 if command -v docker &> /dev/null; then
@@ -91,7 +93,9 @@ fi
 echo
 echo "🟢 Linux setup completed!"
 echo
-read -p "👉 Do you want to open a new bash session for groups and environment variables reload? (y/n) " answer
-if [ $answer = "y" ]; then
-    bash
+if [ $need_reboot = "true" ]; then
+    read -p "👉 Do you want to reboot to apply updates? (y/n) " answer
+    if [ $answer = "y" ]; then
+        sudo shutdown -r now
+    fi
 fi
