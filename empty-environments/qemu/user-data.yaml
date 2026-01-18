@@ -1,0 +1,24 @@
+#cloud-config
+manage_etc_hosts: true
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKki/Gn8pphCB5ZkX7Ws2wxDusq+N1mAU0Y1O1P8Suwu
+    lock_passwd: false
+    passwd: $6$VguMmrrSmURqlr3.$MgxKvCAbA.19oTgwGAD5iztE3efV277Ib4DpGfkn1sG62HkNjos/6ikX07nPDFvnqvrwIygg9a98bIxnrEz/k1
+ssh_pwauth: true
+disable_root: true
+packages:
+  - qemu-guest-agent
+write_files:
+  - path: /usr/local/bin/linux-setup.sh
+    permissions: "0755"
+    content: |
+      #!/bin/bash
+      curl -fsSL https://raw.githubusercontent.com/alberto-ferrini/linux-setup/refs/heads/main/install.sh | sh
+runcmd:
+  - mkdir -p /home/ubuntu
+  - cp /usr/local/bin/linux-setup.sh /home/ubuntu/linux-setup
+  - chown ubuntu:ubuntu /home/ubuntu/linux-setup
